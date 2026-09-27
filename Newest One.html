@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Carcass & Cut List Calculator - Phakamani Services</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #181b22;
+            --border-color: #2a2f3b;
+            --accent-orange: #ff9f43;
+            --accent-green: #2ecc71;
+            --accent-blue: #3498db;
+            --accent-danger: #e74c3c;
+            --text-main: #f1f2f6;
+            --text-muted: #a4b0be;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .brand-header {
+            text-align: center;
+            background: linear-gradient(135deg, #181b22, #222632);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border-bottom: 4px solid var(--accent-orange);
+        }
+
+        .brand-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-orange);
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+
+        .brand-title {
+            color: var(--accent-orange);
+            font-size: 1.3rem;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-creator {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 6px 0 0 0;
+        }
+
+        h1, h2 {
+            color: var(--accent-orange);
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        label {
+            display: block;
+            margin-top: 14px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 6px;
+            background: #111318;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+        }
+
+        .checkbox-group {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #111318;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-orange);
+            margin: 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary { background-color: var(--accent-orange); color: #121212; }
+        .btn-success { background-color: var(--accent-green); color: white; }
+        .btn-warning { background-color: #f39c12; color: #121212; padding: 10px 14px; font-size: 0.85rem; width: auto; margin-top: 8px;}
+        .btn-danger { background-color: var(--accent-danger); color: white; padding: 6px 12px; margin-top: 0; font-size: 0.8rem; width: auto; border-radius: 6px;}
+        .btn-save { background-color: var(--accent-blue); color: white; margin-top: 15px; }
+
+        pre {
+            background: #111318;
+            padding: 16px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.85rem;
+            color: #badc58;
+            border-left: 4px solid var(--accent-orange);
+            border: 1px solid var(--border-color);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .unit-item {
+            background: #111318;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        table.editor-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 700px;
+            background: #111318;
+        }
+
+        table.editor-table th, table.editor-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        table.editor-table th {
+            background-color: #1a1e29;
+            color: var(--accent-orange);
+        }
+
+        table.editor-table input {
+            padding: 6px;
+            font-size: 0.85rem;
+            margin-top: 0;
+            background: #181b22;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="brand-header">
+            <img src="logo.png" alt="Phakamani Services Logo" class="brand-logo" onerror="this.style.display='none'">
+            <p class="brand-title">Phakamani Services (Pty) Ltd</p>
+            <p class="brand-creator">Created by Mbuso Polite Mnguni (Mighty)</p>
+        </div>
+
+        <div class="card">
+            <h2>Configure Carcass</h2>
+            <label>Choose Carcass Type:</label>
+            <select id="carcassType" onchange="toggleInputs()">
+                <option value="A">A. Base Carcass</option>
+                <option value="B">B. Upper Carcass</option>
+                <option value="C">C. Nsika Carcass</option>
+                <option value="D">D. Tall Unit</option>
+                <option value="F">F. Drawers</option>
+                <option value="G">G. Extractor Carcass</option>
+                <option value="TV">TV Stand (Floating & Towers)</option>
+            </select>
+
+            <label id="widthLabel">Width (X in mm):</label>
+            <input type="number" id="widthX" value="1600">
+
+            <div id="heightContainer">
+                <label>Height (Y in mm):</label>
+                <input type="number" id="heightY" value="350">
+            </div>
+
+            <div id="shelvesContainer">
+                <label>Number of Shelves (n):</label>
+                <input type="number" id="shelvesN" value="1">
+            </div>
+
+            <div id="drawerCountContainer" style="display:none;">
+                <label>Number of Drawers:</label>
+                <select id="drawerCount">
+                    <option value="3">3 Drawers</option>
+                    <option value="2">2 Drawers</option>
+                </select>
+            </div>
+
+            <div id="doorStyleContainer">
+                <label>Door Style:</label>
+                <select id="doorStyle">
+                    <option value="Single">Single door</option>
+                    <option value="Double">Double doors</option>
+                    <option value="Double Upside">Double Upside doors</option>
+                </select>
+            </div>
+
+            <!-- TV Stand Specific Inputs -->
+            <div id="tvStandOptions" style="display:none; border-top: 1px dashed var(--border-color); margin-top: 14px; padding-top: 10px;">
+                <label>Wall Width (Xw in mm):</label>
+                <input type="number" id="wallWidth" value="3000">
+
+                <label>Wall Height (Yw in mm):</label>
+                <input type="number" id="wallHeight" value="2600">
+
+                <label>Floating Gap from Floor:</label>
+                <select id="floorGap">
+                    <option value="150">150 mm</option>
+                    <option value="200">200 mm</option>
+                </select>
+
+                <label>TV Panel Width (Xt in mm):</label>
+                <input type="number" id="tvWidthXt" value="1200">
+
+                <label>TV Panel Height (Yt in mm):</label>
+                <input type="number" id="tvHeightYt" value="900">
+
+                <label>Number of Towers (t):</label>
+                <select id="towerCount" onchange="toggleTowerOptions()">
+                    <option value="0">0 Towers (No tower)</option>
+                    <option value="1">1 Tower</option>
+                    <option value="2">2 Towers</option>
+                </select>
+
+                <div id="towerPositionContainer" style="display:none;">
+                    <label>Tower Position:</label>
+                    <select id="towerPosition">
+                        <option value="onTop">Sits on top of the floating unit</option>
+                        <option value="flanking">Against the floating unit by its ends (Flanking sides)</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group" id="buildUpGroup" style="margin-top: 14px;">
+                    <input type="checkbox" id="hasBuildUp">
+                    <label for="hasBuildUp" style="margin:0; color:var(--text-main);">Include Build-Up Section</label>
+                </div>
+            </div>
+
+            <div class="checkbox-group" id="aluminumGroup">
+                <input type="checkbox" id="aluminumHandles">
+                <label for="aluminumHandles" style="margin:0; color:var(--text-main);">Aluminium handles (reduces edge by 30mm)</label>
+            </div>
+
+            <div class="checkbox-group" id="seenEndsGroup">
+                <input type="checkbox" id="seenEnds">
+                <label for="seenEnds" style="margin:0; color:var(--text-main);">Seen Ends (Exposed ends)</label>
+            </div>
+
+            <button class="btn-primary" onclick="addCarcass()">+ Add This Carcass</button>
+        </div>
+
+        <div class="card">
+            <h2>Added Units List</h2>
+            <div id="unitList"><span style="color:var(--text-muted);">No units added yet.</span></div>
+            <button class="btn-success" onclick="generateFullList()">Generate Cut List + Boards & Edging</button>
+        </div>
+
+        <!-- Interactive Editor & Output Section -->
+        <div class="card" id="outputCard" style="display:none;">
+            <h2>Interactive Cut List & Workshop Instructions Editor</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Modify parts, dimensions, quantities, edging length, or machining instructions directly in the table below.</p>
+
+            <div class="table-responsive">
+                <table class="editor-table" id="cutListTable">
+                    <thead>
+                        <tr>
+                            <th>Part Description</th>
+                            <th>Length (mm)</th>
+                            <th>Width (mm)</th>
+                            <th>Qty</th>
+                            <th>Edge (mm)</th>
+                            <th>Machining & Edging Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dynamic rows populate here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button class="btn-warning" onclick="addNewCustomPart()">+ Add Custom Part Line</button>
+            <button class="btn-success" onclick="recalculateFromTable()" style="margin-top:10px;">Recalculate Boards & Edging</button>
+
+            <h2 style="margin-top:24px;">Formatted Cut & Edge Supplier Sheet</h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);">This text format is fully readable by cut & edge suppliers, detailing dimensions, edging edges, and hardware drilling notes.</p>
+            <pre id="outputResult"></pre>
+
+            <button class="btn-save" onclick="downloadCutAndEdgeTextFile()">📥 Download Cut & Edge Sheet (.txt)</button>
+            <button class="btn-save" onclick="saveProjectToFile()" style="background-color:#8e44ad;">💾 Save Entire Project (.html)</button>
+        </div>
+    </div>
+
+<script>
+    let units = [];
+    let masterPartsList = [];
+
+    function toggleInputs() {
+        let type = document.getElementById("carcassType").value;
+        let heightContainer = document.getElementById("heightContainer");
+        let shelvesContainer = document.getElementById("shelvesContainer");
+        let drawerCountContainer = document.getElementById("drawerCountContainer");
+        let doorStyleContainer = document.getElementById("doorStyleContainer");
+        let seenEndsGroup = document.getElementById("seenEndsGroup");
+        let aluminumGroup = document.getElementById("aluminumGroup");
+        let tvStandOptions = document.getElementById("tvStandOptions");
+
+        if (type === "TV") {
+            heightContainer.style.display = "none";
+            shelvesContainer.style.display = "none";
+            drawerCountContainer.style.display = "none";
+            doorStyleContainer.style.display = "none";
+            seenEndsGroup.style.display = "none";
+            aluminumGroup.style.display = "none";
+            tvStandOptions.style.display = "block";
+            toggleTowerOptions();
+        } else {
+            tvStandOptions.style.display = "none";
+            aluminumGroup.style.display = "flex";
+            if (type === "A") {
+                heightContainer.style.display = "none";
+                shelvesContainer.style.display = "block";
+                drawerCountContainer.style.display = "none";
+                doorStyleContainer.style.display = "block";
+                seenEndsGroup.style.display = "flex";
+            } else if (type === "B" || type === "C" || type === "D" || type === "G") {
+                heightContainer.style.display = "block";
+                shelvesContainer.style.display = "block";
+                drawerCountContainer.style.display = "none";
+                doorStyleContainer.style.display = type === "C" ? "none" : "block";
+                seenEndsGroup.style.display = "flex";
+            } else if (type === "F") {
+                heightContainer.style.display = "none";
+                shelvesContainer.style.display = "none";
+                drawerCountContainer.style.display = "block";
+                doorStyleContainer.style.display = "none";
+                seenEndsGroup.style.display = "none";
+            }
+        }
+    }
+
+    function toggleTowerOptions() {
+        let towers = parseInt(document.getElementById("towerCount").value);
+        let towerPositionContainer = document.getElementById("towerPositionContainer");
+        if (towers > 0) {
+            towerPositionContainer.style.display = "block";
+        } else {
+            towerPositionContainer.style.display = "none";
+        }
+    }
+
+    function addCarcass() {
+        let type = document.getElementById("carcassType").value;
+        let unit = {
+            type: type,
+            x: parseFloat(document.getElementById("widthX").value) || 1600,
+            y: parseFloat(document.getElementById("heightY").value) || 350,
+            shelves: parseInt(document.getElementById("shelvesN").value) || 1,
+            drawerCount: parseInt(document.getElementById("drawerCount").value) || 3,
+            doorStyle: document.getElementById("doorStyle").value,
+            aluminum: document.getElementById("aluminumHandles").checked,
+            seenEnds: document.getElementById("seenEnds").checked,
+            wallWidth: parseFloat(document.getElementById("wallWidth").value) || 3000,
+            wallHeight: parseFloat(document.getElementById("wallHeight").value) || 2600,
+            floorGap: parseFloat(document.getElementById("floorGap").value) || 150,
+            xt: parseFloat(document.getElementById("tvWidthXt").value) || 1200,
+            yt: parseFloat(document.getElementById("tvHeightYt").value) || 900,
+            towers: parseInt(document.getElementById("towerCount").value) || 0,
+            towerPosition: document.getElementById("towerPosition").value,
+            hasBuildUp: document.getElementById("hasBuildUp").checked
+        };
+        units.push(unit);
+        renderUnitList();
+    }
+
+    function removeUnit(index) {
+        units.splice(index, 1);
+        renderUnitList();
+    }
+
+    function renderUnitList() {
+        let listDiv = document.getElementById("unitList");
+        if (units.length === 0) {
+            listDiv.innerHTML = '<span style="color:var(--text-muted);">No units added yet.</span>';
+            return;
+        }
+        let html = "";
+        units.forEach((u, i) => {
+            let labelText = u.type === 'TV' ? `TV Stand (Wall: ${u.wallWidth}x${u.wallHeight}mm, Towers: ${u.towers})` : `#${i+1} Type ${u.type} (X: ${u.x}mm)`;
+            html += `<div class="unit-item">
+                <strong>${labelText}</strong>
+                <button class="btn-danger" onclick="removeUnit(${i})">Remove</button>
+            </div>`;
+        });
+        listDiv.innerHTML = html;
+    }
+
+    function generateFullList() {
+        if (units.length === 0) {
+            alert("Please add at least one unit first!");
+            return;
+        }
+
+        masterPartsList = [];
+        units.forEach((u) => {
+            extractPartsToArray(u);
+        });
+
+        renderEditorTable();
+        recalculateFromTable();
+        document.getElementById("outputCard").style.display = "block";
+    }
+
+    function extractPartsToArray(u) {
+        let x = u.x;
+        if (u.type === "TV") {
+            let xt = u.xt, yt = u.yt;
+            masterPartsList.push({ desc: "Seen Ends (TV)", l: 350, w: 320, qty: 2, edge: 350, note: "Edge 1 long side. Exposed panel." });
+            masterPartsList.push({ desc: "Ends (TV)", l: 350, w: 300, qty: 2, edge: 350, note: "Edge 1 front edge." });
+            masterPartsList.push({ desc: "BTM (TV)", l: x - 64, w: 300, qty: 1, edge: x - 64, note: "Edge front edge." });
+            masterPartsList.push({ desc: "Rails (TV)", l: x - 64, w: 100, qty: 4, edge: x - 64, note: "Edge front edge." });
+            masterPartsList.push({ desc: "Div (TV)", l: 318, w: 283, qty: 3, edge: 318, note: "Edge front edge." });
+            masterPartsList.push({ desc: "Doors (TV)", l: (x - 47) / 4, w: 345, qty: 4, edge: ((x - 47) / 4) * 2 + 345 * 2, note: "Edge all 4 sides. Drill 35mm hinge holes." });
+            masterPartsList.push({ desc: "TV Panel", l: xt, w: yt, qty: 1, edge: xt * 2 + yt * 2, note: "Edge all 4 sides." });
+            masterPartsList.push({ desc: "Top (TV)", l: x + 4, w: 320, qty: 1, edge: (x + 4) * 2 + 320 * 2, note: "Edge all 4 sides." });
+            masterPartsList.push({ desc: "TV Panel Mounters", l: 500, w: 100, qty: 8, edge: 0, note: "No edging required." });
+
+            if (u.hasBuildUp) {
+                let buTopWidth = ((x - 400) / 2) + 350;
+                masterPartsList.push({ desc: "Build-Up Top", l: buTopWidth, w: 320, qty: 1, edge: buTopWidth + 640, note: "Edge exposed sides." });
+                masterPartsList.push({ desc: "Build-Up Bottom", l: x, w: 320, qty: 1, edge: x + 640, note: "Edge exposed sides." });
+                masterPartsList.push({ desc: "Build-Up Side", l: 466, w: 320, qty: 1, edge: 466, note: "Edge exposed side." });
+                masterPartsList.push({ desc: "Build-Up Rail", l: 100, w: 320, qty: 1, edge: 100, note: "Edge front." });
+            }
+
+            if (u.towers > 0) {
+                let calcY = (u.towerPosition === "onTop") ? (u.wallHeight - u.floorGap - 350) : (u.wallHeight - u.floorGap);
+                masterPartsList.push({ desc: "Tower Ends", l: calcY, w: 300, qty: 2 * u.towers, edge: calcY * u.towers, note: "Edge front height." });
+                masterPartsList.push({ desc: "Tower BTM/Top", l: 368, w: 300, qty: 2 * u.towers, edge: 368 * u.towers, note: "Edge front." });
+                masterPartsList.push({ desc: "Tower Shelves", l: 368, w: 280, qty: u.shelves * u.towers, edge: 368 * u.towers, note: "Edge front." });
+                masterPartsList.push({ desc: "Tower Back", l: 368, w: calcY - 32, qty: 1 * u.towers, edge: 0, note: "No edging." });
+            }
+        } else if (u.type === "A") {
+            masterPartsList.push({ desc: "Base Ends", l: 750, w: 540, qty: 2, edge: 750, note: "Edge front height (540mm depth)." });
+            masterPartsList.push({ desc: "Base BTM", l: x - 32, w: 540, qty: 1, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: "Base Rails", l: x - 32, w: 100, qty: 4, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: "Base Shelf", l: x - 32, w: 537, qty: u.shelves, edge: x - 32, note: "Edge front width." });
+
+            let doorEdge = u.aluminum ? -30 : 0;
+            if (u.doorStyle === "Single") {
+                let dWidth = x - 6;
+                masterPartsList.push({ desc: "Single Door", l: 747, w: dWidth, qty: 1, edge: (747 * 2 + dWidth * 2) + doorEdge, note: "Edge all 4 sides. Drill 35mm hinge holes on left/right as needed." });
+            } else if (u.doorStyle === "Double") {
+                let dWidth = (x - 9) / 2;
+                masterPartsList.push({ desc: "Double Doors", l: 747, w: dWidth, qty: 2, edge: ((747 * 2 + dWidth * 2) + doorEdge) * 2, note: "Edge all 4 sides. Drill 35mm hinge holes." });
+            } else {
+                let dWidth = x - 3;
+                masterPartsList.push({ desc: "Double Upside Doors", l: 372, w: dWidth, qty: 2, edge: ((372 * 2 + dWidth * 2) + doorEdge) * 2, note: "Edge all 4 sides. Drill 35mm hinge holes." });
+            }
+
+            if (u.seenEnds) {
+                masterPartsList.push({ desc: "Base Seen Ends", l: 750, w: 560, qty: 2, edge: 750, note: "Exposed end panel. Edge 1 long side." });
+            }
+        } else if (u.type === "B" || u.type === "G") {
+            let y = u.type === "G" ? u.y - 30 : u.y;
+            let titlePrefix = u.type === "G" ? "Extractor" : "Upper";
+            masterPartsList.push({ desc: `${titlePrefix} Ends`, l: y, w: 350, qty: 2, edge: y, note: "Edge front height." });
+            masterPartsList.push({ desc: `${titlePrefix} BTM/Top`, l: x - 32, w: 350, qty: 2, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: `${titlePrefix} Rails`, l: x - 32, w: 100, qty: 2, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: `${titlePrefix} Shelves`, l: x - 32, w: 347, qty: u.shelves, edge: x - 32, note: "Edge front width." });
+
+            if (u.seenEnds) {
+                masterPartsList.push({ desc: `${titlePrefix} Seen Ends`, l: y, w: 370, qty: 2, edge: y, note: "Exposed side panel. Edge 1 long side." });
+            }
+        } else if (u.type === "C") {
+            masterPartsList.push({ desc: "Nsika Ends", l: u.y, w: 370, qty: 2, edge: u.y, note: "Edge front height." });
+            masterPartsList.push({ desc: "Nsika Shelves/BTM/Top", l: x - 32, w: 370, qty: u.shelves + 2, edge: x - 32, note: "Edge front width." });
+            if (u.seenEnds) {
+                masterPartsList.push({ desc: "Nsika Seen Ends", l: u.y, w: 370, qty: 2, edge: u.y * 2, note: "Exposed side panels. Edge 2 sides." });
+            }
+        } else if (u.type === "D") {
+            masterPartsList.push({ desc: "Tall Ends", l: u.y, w: 540, qty: 2, edge: u.y, note: "Edge front height." });
+            masterPartsList.push({ desc: "Tall BTM/Top", l: x - 32, w: 540, qty: 2, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: "Tall Rails", l: x - 32, w: 100, qty: 2, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: "Tall Shelves", l: x - 32, w: 537, qty: u.shelves, edge: x - 32, note: "Edge front width." });
+            masterPartsList.push({ desc: "Tall Door", l: u.y - 3, w: x - 6, qty: 1, edge: (u.y - 3) * 2 + (x - 6) * 2, note: "Edge all 4 sides. Drill 35mm hinge holes (multi-hinge layout)." });
+            if (u.seenEnds) {
+                masterPartsList.push({ desc: "Tall Seen Ends", l: u.y, w: 560, qty: 2, edge: u.y * 2, note: "Exposed side panel. Edge 1 long side." });
+            }
+        } else if (u.type === "F") {
+            let n = u.drawerCount;
+            let faceExprVal = n === 3 ? (750 - 12) / 3 : (750 - 9) / 2;
+            let fbVal = n === 3 ? 150 : 250;
+            let doorEdge = u.aluminum ? -30 : 0;
+
+            masterPartsList.push({ desc: "Drawer Faces", l: faceExprVal, w: x - 6, qty: n, edge: (faceExprVal * 2 + (x - 6) * 2 + doorEdge) * n, note: "Edge all 4 sides." });
+            masterPartsList.push({ desc: "Drawer Front/Back", l: fbVal, w: x - 90, qty: n * 2, edge: (x - 90) * n * 2, note: "Edge top edge." });
+            masterPartsList.push({ desc: "Drawer Sides", l: 150, w: 440, qty: n * 2, edge: 440 * n * 2, note: "Edge top edge." });
+            masterPartsList.push({ desc: "Drawer Bottom", l: 408, w: x - 90, qty: n, edge: 0, note: "No edging." });
+        }
+    }
+
+    function renderEditorTable() {
+        let tbody = document.getElementById("tableBody");
+        let html = "";
+        masterPartsList.forEach((part, index) => {
+            html += `<tr>
+                <td><input type="text" value="${part.desc}" id="desc_${index}"></td>
+                <td><input type="number" value="${part.l}" id="l_${index}" style="width:75px;"></td>
+                <td><input type="number" value="${part.w}" id="w_${index}" style="width:75px;"></td>
+                <td><input type="number" value="${part.qty}" id="qty_${index}" style="width:55px;"></td>
+                <td><input type="number" value="${part.edge}" id="edge_${index}" style="width:75px;"></td>
+                <td><input type="text" value="${part.note || ''}" id="note_${index}"></td>
+                <td><button class="btn-danger" onclick="removePartRow(${index})">Delete</button></td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function addNewCustomPart() {
+        masterPartsList.push({ desc: "Custom Part", l: 500, w: 300, qty: 1, edge: 500, note: "Custom specification." });
+        renderEditorTable();
+    }
+
+    function removePartRow(index) {
+        masterPartsList.splice(index, 1);
+        renderEditorTable();
+        recalculateFromTable();
+    }
+
+    function recalculateFromTable() {
+        let totalAreaMm2 = 0;
+        let totalEdgingMm = 0;
+
+        let textSummary = "==================================================\n";
+        textSummary += "PHAKAMANI SERVICES (PTY) LTD - CUT & EDGE ORDER SHEET\n";
+        textSummary += "Created by Mbuso Polite Mnguni (Mighty)\n";
+        textSummary += "==================================================\n\n";
+
+        masterPartsList = [];
+        let rows = document.querySelectorAll("#tableBody tr");
+        
+        rows.forEach((row, index) => {
+            let desc = document.getElementById(`desc_${index}`).value;
+            let l = parseFloat(document.getElementById(`l_${index}`).value) || 0;
+            let w = parseFloat(document.getElementById(`w_${index}`).value) || 0;
+            let qty = parseInt(document.getElementById(`qty_${index}`).value) || 0;
+            let edge = parseFloat(document.getElementById(`edge_${index}`).value) || 0;
+            let note = document.getElementById(`note_${index}`).value;
+
+            masterPartsList.push({ desc, l, w, qty, edge, note });
+
+            let partArea = l * w * qty;
+            totalAreaMm2 += partArea;
+            totalEdgingMm += edge;
+
+            textSummary += `[${index + 1}] ${desc}\n`;
+            textSummary += `    Dimensions: ${l} mm (Length) x ${w} mm (Width)\n`;
+            textSummary += `    Quantity  : ${qty}\n`;
+            textSummary += `    Edging    : ${edge} mm\n`;
+            textSummary += `    Shop Notes: ${note}\n`;
+            textSummary += `--------------------------------------------------\n`;
+        });
+
+        const sheetArea = 2.730 * 1.810 * 1000000; // standard sheet size in mm2
+        let effectiveAreaMm2 = totalAreaMm2 * 1.18; // 18% standard waste factor
+        let totalBoards = Math.ceil(effectiveAreaMm2 / sheetArea);
+        let totalEdgingMeters = (totalEdgingMm / 1000).toFixed(2);
+
+        textSummary += `\nSUMMARY FOR SUPPLIER:\n`;
+        textSummary += `==================================================\n`;
+        textSummary += `Estimated Boards Required (2730 x 1810 mm): ${totalBoards} Sheet(s)\n`;
+        textSummary += `Total Edging Required                     : ${totalEdgingMeters} Meters\n`;
+        textSummary += `==================================================\n`;
+
+        document.getElementById("outputResult").innerText = textSummary;
+    }
+
+    function downloadCutAndEdgeTextFile() {
+        recalculateFromTable();
+        let content = document.getElementById("outputResult").innerText;
+        let blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Cut_and_Edge_Order_Sheet.txt";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function saveProjectToFile() {
+        let rows = document.querySelectorAll("#tableBody tr");
+        if (rows.length > 0) {
+            masterPartsList = [];
+            rows.forEach((row, index) => {
+                let desc = document.getElementById(`desc_${index}`).value;
+                let l = parseFloat(document.getElementById(`l_${index}`).value) || 0;
+                let w = parseFloat(document.getElementById(`w_${index}`).value) || 0;
+                let qty = parseInt(document.getElementById(`qty_${index}`).value) || 0;
+                let edge = parseFloat(document.getElementById(`edge_${index}`).value) || 0;
+                let note = document.getElementById(`note_${index}`).value;
+                masterPartsList.push({ desc, l, w, qty, edge, note });
+            });
+        }
+
+        let projectName = prompt("Enter a name for your project file:", "Phakamani_Kitchen_Project");
+        if (!projectName) return;
+
+        let stateToSave = {
+            units: units,
+            masterPartsList: masterPartsList
+        };
+
+        let fileScript = `\n<script>\n    window.SAVED_PROJECT_STATE = ${JSON.stringify(stateToSave)};\n<\/script>\n`;
+        let finalHtml = "<!DOCTYPE html>\n<html lang=\"en\">\n" + document.head.outerHTML + "\n<body>\n" + document.body.innerHTML + fileScript + "\n</body>\n</html>";
+
+        let blob = new Blob([finalHtml], { type: "text/html;charset=utf-8" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = projectName.trim().replace(/[^a-z0-9-_]/gi, '_') + ".html";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    window.onload = function() {
+        if (window.SAVED_PROJECT_STATE) {
+            units = window.SAVED_PROJECT_STATE.units || [];
+            masterPartsList = window.SAVED_PROJECT_STATE.masterPartsList || [];
+            
+            renderUnitList();
+            if (masterPartsList.length > 0) {
+                renderEditorTable();
+                recalculateFromTable();
+                document.getElementById("outputCard").style.display = "block";
+            }
+        }
+    };
+</script>
+
+</body>
+</html>
